@@ -3,6 +3,9 @@ const wa = 'https://wa.me/996709139603';
 const paths = {
   instagram:'<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.6" r="1" fill="currentColor" stroke="none"/>',
   share:'<path d="M12 15V3m-4 4 4-4 4 4M6 11H4v10h16V11h-2"/>',
+  copy:'<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/>',
+  check:'<path d="m4 12 5 5L20 6"/>',
+  telegram:'<path d="m3 10 18-7-4 18-6-5-3 3v-6l9-7-11 6Z"/>',
   wa:'<path d="M20.5 11.6a8.6 8.6 0 0 1-12.8 7.5L3 20.5l1.3-4.6a8.6 8.6 0 1 1 16.2-4.3Z"/><path d="M8.3 7.3c.7-.5 1.1 0 1.4.9l.4 1c.1.4-.3.8-.6 1.1.7 1.3 1.8 2.4 3.4 3.1l.9-1.1c.2-.3.5-.2.8-.1l1.6.8c.4.2.4.5.2 1.1-.3 1.1-1.3 1.6-2.3 1.4-3.6-.7-6.2-3.2-7.1-6-.3-1 .3-1.9 1.3-2.2Z" stroke-width="1.2"/>',
   search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
   calendar:'<rect x="3.5" y="5" width="17" height="16" rx="3"/><path d="M7.5 3v4m9-4v4M4 10h16"/>',
@@ -94,30 +97,59 @@ function refreshBooking(){
   }
   order.insertAdjacentHTML('afterbegin',icon('wa'));
 }
-async function copyProductLink() {
+function initShare() {
+  const wrap = $('.share-wrap');
+  if (!wrap) return;
+  const trigger = $('#share'), menu = $('#share-options'), copy = $('#share-copy');
+  const manual = $('#manual-link'), label = copy.querySelector('span'), glyph = copy.querySelector('i');
   const url = new URL(location.href);
   url.search = '';
   url.hash = '';
-  const status = $('#share-status');
-  const manual = $('#manual-link');
-  manual.hidden = true;
-  let copied = false;
-  try {
-    await navigator.clipboard.writeText(url.href);
-    copied = true;
-  } catch {
-    manual.hidden = false;
-    const input = manual.querySelector('input');
-    input.value = url.href;
-    input.select();
-    try { copied = document.execCommand('copy'); } catch {}
-    if (copied) {
-      manual.hidden = true;
-      $('#share').focus();
-    }
+  $('#share-wa').href = 'https://wa.me/?text=' + encodeURIComponent(url.href);
+  $('#share-tg').href = 'https://t.me/share/url?url=' + encodeURIComponent(url.href);
+  let session = 0;
+  function setOpen(open) {
+    session++;
+    menu.hidden = !open;
+    trigger.setAttribute('aria-expanded', String(open));
+    manual.hidden = true;
+    label.textContent = 'Скопировать ссылку';
+    glyph.innerHTML = icon('copy');
   }
-  status.textContent = copied ? 'Ссылка скопирована' : 'Скопируйте выделенную ссылку';
+  trigger.addEventListener('click', () => setOpen(menu.hidden));
+  document.addEventListener('click', e => {
+    if (!menu.hidden && !wrap.contains(e.target)) setOpen(false);
+  });
+  wrap.addEventListener('focusout', e => {
+    if (!menu.hidden && e.relatedTarget && !wrap.contains(e.relatedTarget)) setOpen(false);
+  });
+  wrap.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !menu.hidden) {
+      setOpen(false);
+      trigger.focus();
+    }
+  });
+  copy.addEventListener('click', async () => {
+    const current = session;
+    try {
+      await navigator.clipboard.writeText(url.href);
+    } catch {
+      if (session !== current) return;
+      manual.hidden = false;
+      const input = manual.querySelector('input');
+      input.value = url.href;
+      input.focus();
+      input.select();
+      try { if (!document.execCommand('copy')) return; } catch { return; }
+      copy.focus();
+    }
+    if (session !== current) return;
+    manual.hidden = true;
+    glyph.innerHTML = icon('check');
+    label.textContent = 'Скопировано';
+  });
 }
+initShare();
 function openDates(){
   draftStart=validRange()?start:'';draftEnd=validRange()?end:'';
   const today=parseDate(todayKey()); month=new Date(today.getFullYear(),today.getMonth(),1,12);
@@ -150,7 +182,6 @@ document.addEventListener('click',event=>{
   if(!el)return;
   if(el.hasAttribute('data-close'))return el.closest('dialog').close();
   if(el.dataset.info)return showInfo(el.dataset.info);
-  if(el.id==='share')return copyProductLink();
   if(el.dataset.cat){category=el.dataset.cat;return renderCatalog();}
   if(el.id==='reset'){$('#search').value='';category='all';renderCatalog();return $('#search').focus();}
   if(el.id==='main-dates'||el.id==='product-dates'||(el.id==='order'&&el.dataset.ready==='false')){event.preventDefault();return openDates();}

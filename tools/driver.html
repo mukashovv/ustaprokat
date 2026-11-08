@@ -15,9 +15,16 @@
 <main class="wrap product-page">
   <div class="product-nav">
     <nav class="breadcrumbs" aria-label="Хлебные крошки"><a href="../index.html#catalog" data-catalog-link>Каталог</a><i data-icon="right"></i><span aria-current="page">Ударный винтовёрт</span></nav>
-    <button type="button" class="share" id="share"><i data-icon="share"></i>Поделиться</button>
+    <div class="share-wrap">
+      <button type="button" class="share" id="share" aria-expanded="false" aria-controls="share-options"><i data-icon="share"></i>Поделиться<i data-icon="down"></i></button>
+      <div id="share-options" hidden>
+        <button type="button" id="share-copy"><i data-icon="copy"></i><span aria-live="polite">Скопировать ссылку</span></button>
+        <label id="manual-link" hidden>Скопируйте выделенную ссылку<input readonly type="url"></label>
+        <a id="share-wa" target="_blank" rel="noopener"><i data-icon="wa"></i>WhatsApp</a>
+        <a id="share-tg" target="_blank" rel="noopener"><i data-icon="telegram"></i>Телеграм</a>
+      </div>
+    </div>
   </div>
-  <div class="share-feedback"><span id="share-status" role="status"></span><label id="manual-link" hidden>Ссылка на инструмент <input readonly type="url"></label></div>
   <article class="product-layout">
     <div class="detail-art"><img src="../assets/driver.webp" alt="Ударный винтовёрт" fetchpriority="high"></div>
     <div class="product-content">
