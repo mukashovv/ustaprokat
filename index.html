@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ru"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#ffffff"><meta name="description" content="USTAPROKAT — аренда строительного инструмента. Выберите инструмент, укажите даты и отправьте заявку в WhatsApp.">
+<title>USTAPROKAT — аренда строительного инструмента</title>
+<link rel="icon" href="assets/icon.svg"><link rel="stylesheet" href="style.css">
+<script src="catalog.js" defer></script><script src="app.js" defer></script>
+</head><body>
+<header class="head"><div class="wrap bar">
+<a class="logo" href="index.html" aria-label="USTAPROKAT, главная">USTA<span>PROKAT</span></a>
+<nav aria-label="Навигация"><a href="#catalog" class="current">Каталог</a><button data-info="rent">Как арендовать</button><button data-info="contacts">Контакты</button></nav>
+<a class="contact" target="_blank" rel="noopener" href="https://wa.me/996709139603"><i data-icon="wa"></i> WhatsApp</a>
+</div></header>
+<main class="wrap"><section class="hero" aria-labelledby="hero-title">
+<div class="hero-copy"><h1 id="hero-title">Инструмент<br>для вашей задачи<span>.</span></h1><p>Строительный инструмент в аренду.<br>Выберите даты и закажите в WhatsApp.</p>
+<a href="#catalog" class="hero-cta">Выбрать инструмент <i data-icon="arrow"></i></a></div>
+<div class="drawing" aria-hidden="true"><div class="ring"></div><div class="ring two"></div><b class="cross one"></b><b class="cross two"></b></div>
+<a class="hero-product" href="tools/hammer.html" aria-label="Открыть перфоратор"><img src="assets/hammer.webp" alt="Перфоратор DeWalt" fetchpriority="high"></a>
+<a class="annotation" href="tools/hammer.html"><b></b>Перфоратор <span>DeWalt</span><i data-icon="upRight"></i></a>
+</section>
+<section id="catalog" aria-labelledby="catalog-title"><div class="catalog-title"><h2 id="catalog-title">Каталог инструментов</h2><span id="count" aria-live="polite"></span></div>
+<div class="toolbar"><label class="search"><i data-icon="search"></i><input id="search" type="search" placeholder="Поиск по названию или задаче" aria-label="Поиск по названию или задаче" autocomplete="off"></label><button id="main-dates" class="date-button"><i data-icon="calendar"></i><span>Даты аренды</span><i data-icon="down"></i></button></div>
+<div id="filters" class="filters" role="group" aria-label="Категории инструментов"></div><div id="grid" class="grid"></div></section>
+</main>
+<footer><div class="wrap foot"><a href="index.html" class="logo">USTA<span>PROKAT</span></a><button data-info="rent">Как арендовать</button><button data-info="contacts">Контакты</button><a href="tel:+996709139603">+996 709 139 603</a><a class="social-link" href="https://www.instagram.com/ustaprokat_kg/" target="_blank" rel="noopener" aria-label="USTAPROKAT в Instagram" title="@ustaprokat_kg"><i data-icon="instagram"></i></a>
+<a class="footer-credit" href="https://whatsappstores.github.io/" target="_blank" rel="noopener">Сделано @Wstore.kg</a></div></footer>
+<dialog id="dates" aria-labelledby="date-title"></dialog><dialog id="info" aria-labelledby="info-title"></dialog>
+</body></html>
