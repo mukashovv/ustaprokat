@@ -68,3 +68,18 @@ dialog{margin:auto;color:var(--navy);background:white;border:1px solid var(--lin
   .product-content .category { font-size: 10px; }
   .product-content .product-details { margin: 16px 0; }
 }
+
+.availability {
+  display: block;
+  color: #25613b;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 9px;
+}
+.product-content dl div {
+  padding: 7px 0;
+  align-items: baseline;
+}
+.product-content dl dt { min-width: 0; }
+.product-content dl dd { flex-shrink: 0; }

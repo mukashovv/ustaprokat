@@ -29,8 +29,8 @@ function renderCatalog(){
   });
   $('#count').textContent=shown.length;
   $('#grid').innerHTML=shown.map((p,i)=>`<a class="card" href="tools/${p.id}.html" aria-label="Взять в аренду: ${p.name}">
-    <span class="pic ${inUsePhotos.has(p.id)?'action':''}"><img src="assets/${p.id}.webp" alt="${p.name}" loading="${i<4?'eager':'lazy'}"></span>
-    <span class="card-info"><span class="category">${categories[p.cat]}</span><strong class="tool-name">${p.name}</strong><span class="model">${p.model}</span>
+    <span class="pic ${inUsePhotos.has(p.id)?'action':''}"><img src="assets/${p.image || p.id + '.webp'}" alt="${p.name}" loading="${i<4?'eager':'lazy'}"></span>
+    <span class="card-info"><span class="category">${categories[p.cat]}</span><strong class="tool-name">${p.name}</strong><span class="model">${p.model}</span>${p.available ? '<span class="availability">Доступно для аренды</span>' : ''}
     <span class="card-bottom">Взять в аренду<span class="round-arrow">${icon('upRight')}</span></span></span></a>`).join('')||'<div class="empty">Инструменты не найдены<br><button id="reset">Сбросить поиск и фильтр</button></div>';
   updateDateLinks();
   document.querySelectorAll('[data-cat]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.cat===category)));
