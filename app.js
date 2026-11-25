@@ -29,8 +29,8 @@ function renderCatalog(){
   });
   $('#count').textContent=shown.length;
   $('#grid').innerHTML=shown.map((p,i)=>`<a class="card" href="tools/${p.id}.html" aria-label="Взять в аренду: ${p.name}">
-    <span class="pic ${inUsePhotos.has(p.id)?'action':''}"><img src="assets/${p.image || p.id + '.webp'}" alt="${p.name}" loading="${i<4?'eager':'lazy'}"></span>
-    <span class="card-info"><span class="category">${categories[p.cat]}</span><strong class="tool-name">${p.name}</strong><span class="model">${p.model}</span>${p.available ? '<span class="availability">Доступно для аренды</span>' : ''}
+    <span class="pic ${inUsePhotos.has(p.id)?'action':''}"><img src="assets/${p.image || p.id + '.webp'}" alt="${p.name}" loading="${i<4?'eager':'lazy'}">${p.available ? '<span class="availability">Доступно для аренды</span>' : ''}</span>
+    <span class="card-info"><span class="category">${categories[p.cat]}</span><strong class="tool-name">${p.name}</strong><span class="model">${p.model}</span>${p.price ? `<span class="rental-price">${p.price}</span>` : ''}
     <span class="card-bottom">Взять в аренду<span class="round-arrow">${icon('upRight')}</span></span></span></a>`).join('')||'<div class="empty">Инструменты не найдены<br><button id="reset">Сбросить поиск и фильтр</button></div>';
   updateDateLinks();
   document.querySelectorAll('[data-cat]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.cat===category)));
@@ -86,16 +86,13 @@ function refreshBooking(){
     $('#main-dates span').textContent=rangeLabel();
     return;
   }
-  $('#product-dates span').textContent=validRange()?rangeLabel():'Выбрать даты аренды';
-  const order=$('#order');
-  if(validRange()){
-    const message=['Здравствуйте! Хочу взять инструмент в аренду в USTAPROKAT.',selectedProduct.name,'С '+dateText(start,true)+' по '+dateText(end,true)+' включительно.','Подскажите, пожалуйста, стоимость и наличие на эти даты.'].join('\n');
-    order.href=wa+'?text='+encodeURIComponent(message);
-    order.textContent='Оформить в WhatsApp'; order.dataset.ready='true';
-  }else{
-    order.removeAttribute('href');order.dataset.ready='false';order.setAttribute('tabindex','0');order.textContent='Оформить в WhatsApp';
-  }
-  order.insertAdjacentHTML('afterbegin',icon('wa'));
+}
+function bookingUrl(from, to) {
+  const message = ['Здравствуйте! Хочу взять инструмент в аренду в USTAPROKAT.',
+    selectedProduct.name,
+    'С ' + dateText(from, true) + ' по ' + dateText(to, true) + ' включительно.',
+    'Подтвердите, пожалуйста, наличие на эти даты.'].join('\n');
+  return wa + '?text=' + encodeURIComponent(message);
 }
 function initShare() {
   const wrap = $('.share-wrap');
@@ -170,11 +167,13 @@ function renderCalendar(){
   <div class="date-bounds"><div><small>Начало аренды</small>${draftStart?dateText(draftStart):'Выберите дату'}</div><div><small>Конец аренды</small>${draftEnd?dateText(draftEnd):'Выберите дату'}</div></div>
   <div class="month-head"><button data-month="-1" class="icon-button" aria-label="Предыдущий месяц" ${visible<=today.slice(0,7)?'disabled':''}>${icon('left')}</button><strong>${month.toLocaleDateString('ru-RU',{month:'long',year:'numeric'}).replace(' г.','')}</strong><button data-month="1" class="icon-button" aria-label="Следующий месяц">${icon('right')}</button></div>
   <div class="days">${['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].map(s=>'<small>'+s+'</small>').join('')}${'<span></span>'.repeat(blanks)}${cells}</div>
-  <p class="cal-tip" aria-live="polite">${caption}</p><div class="cal-foot"><button class="clear-date" data-clear>Сбросить</button><button class="primary" id="apply" ${!draftEnd?'disabled':''}>Применить</button></div>`;
+  <p class="cal-tip" aria-live="polite">${caption}</p><div class="cal-foot"><button class="clear-date" data-clear>Сбросить</button>${selectedProduct && draftEnd
+    ? `<a class="primary" id="book" href="${bookingUrl(draftStart, draftEnd)}" target="_blank" rel="noopener">Взять в аренду</a>`
+    : `<button class="primary" id="apply" ${!draftEnd?'disabled':''}>${selectedProduct?'Взять в аренду':'Применить'}</button>`}</div>`;
 }
 function showInfo(key){
   const rent=key==='rent';
-  infoDialog.innerHTML='<header><h2 id="info-title">'+(rent?'Как арендовать':'Контакты')+'</h2>'+closeButton+'</header><div class="dialog-copy">'+(rent?'<ol><li>Найдите инструмент в каталоге и откройте карточку.</li><li>Выберите в календаре первый и последний день аренды. Для аренды на один день дважды нажмите на одну дату.</li><li>Нажмите «Оформить в WhatsApp» и отправьте готовую заявку. Менеджер подтвердит наличие, стоимость и условия получения.</li></ol>':'<p>По вопросам аренды напишите в WhatsApp или позвоните.</p><a href="tel:+996709139603">+996 709 139 603</a><a class="primary" href="'+wa+'" target="_blank" rel="noopener">'+icon('wa')+'Написать в WhatsApp</a>')+'</div>';
+  infoDialog.innerHTML='<header><h2 id="info-title">'+(rent?'Как арендовать':'Контакты')+'</h2>'+closeButton+'</header><div class="dialog-copy">'+(rent?'<ol><li>Найдите инструмент в каталоге и откройте карточку.</li><li>Нажмите «Арендовать» и выберите в календаре первый и последний день аренды. Для аренды на один день дважды нажмите на одну дату.</li><li>Нажмите «Взять в аренду» и отправьте готовую заявку в WhatsApp. Менеджер подтвердит наличие, стоимость и условия получения.</li></ol>':'<p>По вопросам аренды напишите в WhatsApp или позвоните.</p><a href="tel:+996709139603">+996 709 139 603</a><a class="primary" href="'+wa+'" target="_blank" rel="noopener">'+icon('wa')+'Написать в WhatsApp</a>')+'</div>';
   infoDialog.showModal();
 }
 document.addEventListener('click',event=>{
@@ -184,14 +183,15 @@ document.addEventListener('click',event=>{
   if(el.dataset.info)return showInfo(el.dataset.info);
   if(el.dataset.cat){category=el.dataset.cat;return renderCatalog();}
   if(el.id==='reset'){$('#search').value='';category='all';renderCatalog();return $('#search').focus();}
-  if(el.id==='main-dates'||el.id==='product-dates'||(el.id==='order'&&el.dataset.ready==='false')){event.preventDefault();return openDates();}
+  if(el.id==='main-dates'||el.id==='order'){event.preventDefault();return openDates();}
   if(el.dataset.month){month.setMonth(month.getMonth()+Number(el.dataset.month));renderCalendar();(dateDialog.querySelector('[data-month="'+el.dataset.month+'"]:enabled')||dateDialog.querySelector('[data-month="1"]')).focus();return;}
   if(el.dataset.day){
     const key=el.dataset.day;
     if(!draftStart||draftEnd||key<draftStart){draftStart=key;draftEnd='';}else{draftEnd=key;}
     renderCalendar();dateDialog.querySelector('[data-day="'+key+'"]').focus();return;
   }
-  if(el.hasAttribute('data-clear')){start='';end='';rememberRange();return dateDialog.close();}
+  if(el.hasAttribute('data-clear')){draftStart='';draftEnd='';return renderCalendar();}
+  if(el.id==='book'){start=draftStart;end=draftEnd;rememberRange();}
   if(el.id==='apply'&&draftStart>=todayKey()&&draftEnd>=draftStart){start=draftStart;end=draftEnd;dateDialog.close();rememberRange();}
 });
 document.addEventListener('keydown',event=>{if(event.target.id==='order'&&event.target.dataset.ready==='false'&&['Enter',' '].includes(event.key)){event.preventDefault();openDates();}});

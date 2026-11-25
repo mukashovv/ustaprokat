@@ -69,17 +69,53 @@ dialog{margin:auto;color:var(--navy);background:white;border:1px solid var(--lin
   .product-content .product-details { margin: 16px 0; }
 }
 
+.pic, .detail-art { position: relative; }
 .availability {
-  display: block;
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 1;
+  max-width: calc(100% - 16px);
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: #e7f3e9;
   color: #25613b;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
-  line-height: 1.4;
-  margin-top: 9px;
+  line-height: 1.3;
+  text-align: left;
 }
+.detail-art .availability { font-size: 14px; }
+
 .product-content dl div {
   padding: 7px 0;
   align-items: baseline;
 }
 .product-content dl dt { min-width: 0; }
 .product-content dl dd { flex-shrink: 0; }
+
+.rental-price {
+  display: block;
+  margin-top: 10px;
+  font-size: 18px;
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--navy);
+}
+.product-content .rental-price { font-size: 24px; }
+
+.product-layout {
+  grid-template-areas: "photo order" "details order";
+  row-gap: 24px;
+}
+.product-layout > .detail-art { grid-area: photo; }
+.product-layout > .product-content { grid-area: order; position: sticky; top: 24px; }
+.product-layout > .product-details { grid-area: details; margin: 0; min-width: 0; }
+.product-content .order-actions { margin-top: 24px; }
+.product-details dl div { padding: 7px 0; align-items: baseline; }
+.product-details dl dd { flex-shrink: 0; }
+@media (max-width: 730px) {
+  .product-layout { grid-template-areas: "photo" "order" "details"; }
+  .product-layout > .product-content { position: static; }
+  .product-content .order-actions { margin-top: 18px; }
+}
